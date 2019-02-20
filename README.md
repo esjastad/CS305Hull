@@ -1,2 +1,2 @@
-# CS305Hull
+# CS350Hull
 ConvexHull Algorithm Comparisons
