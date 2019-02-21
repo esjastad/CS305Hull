@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import random
 import copy
+import time
+import tkinter as tk
 
 def Pdraw(points, p1,p2,p3,img,c):
 	for i in points:
@@ -33,6 +35,7 @@ def insertion_sort(InputList):
 
 #Generate Top and Bottom hull start
 def quickhull(points, p1, p2,img):
+	start = time.time()
 	bbest = 0	#used to check if farthest point distance for comparison to bottom hull
 	tbest = 0	#used to check if farthest point distance for comparison to top hull
 	bmax = None #used to store farthest point for bottom hull
@@ -71,7 +74,7 @@ def quickhull(points, p1, p2,img):
 	if len(bList) > 1:
 		bList.remove(bmax)
 
-		Pdraw(bList,p1,p2,bmax,img2,(0,255,0))
+		#Pdraw(bList,p1,p2,bmax,img2,(0,255,0))
 		
 		hull = quickb(bList, p1, bmax,img2)	#recursive call to bottom hull left half
 		hull = hull + quickb(bList, bmax, p2,img2) #recursive call to bottom hull right half
@@ -85,7 +88,7 @@ def quickhull(points, p1, p2,img):
 	if len(tList) > 1:
 		tList.remove(tmax)
 		
-		Pdraw(tList,p1,p2,tmax,img2,(0,255,0))
+		#Pdraw(tList,p1,p2,tmax,img2,(0,255,0))
 		
 		hull = hull + quickt(tList, tmax, p2,img2) 	#recursive call to top hull right half
 		hull = hull + quickt(tList, p1, tmax,img2)	#recursive call to top hull left half
@@ -94,7 +97,7 @@ def quickhull(points, p1, p2,img):
 		hull.append(tmax)
 	else:
 		hull.append(p2)
-			
+	print(time.time() -start)	
 	return hull
 
 #Generate bottom convex hull	code is nearly identical to quickhull but only generates bottom hull
@@ -124,14 +127,14 @@ def quickb(points,p1,p2,img):
 		bList.remove(bmax)
 
 	if len(bList) == 0:
-		cv2.line(img,p1,p2,(255,0,0),1)
+		#cv2.line(img,p1,p2,(255,0,0),1)
 		hull.append(p1)
-		Cdraw(p1,img)
+		#Cdraw(p1,img)
 		if bmax:
 			hull.append(bmax)
-			Cdraw(bmax,img)
+			#Cdraw(bmax,img)
 	else:
-		Pdraw(bList,p1,p2,bmax,img,(255,0,0))
+		#Pdraw(bList,p1,p2,bmax,img,(255,0,0))
 		hull = hull + quickb(bList, p1,bmax,img)
 		hull = hull + quickb(bList, bmax, p2,img)
 	
@@ -167,25 +170,29 @@ def quickt(points,p1,p2,img):
 		tList.remove(tmax)
 		
 	if len(tList) == 0:
-		cv2.line(img,p1,p2,(255,0,0),1)
+		#cv2.line(img,p1,p2,(255,0,0),1)
 		hull.append(p2)
-		Cdraw(p2,img)
+		#Cdraw(p2,img)
 		if tmax:
 			hull.append(tmax)
-			Cdraw(tmax,img)
+			#Cdraw(tmax,img)
 	else:
-		Pdraw(tList,p1,p2,tmax,img,(255,0,0))
+		#Pdraw(tList,p1,p2,tmax,img,(255,0,0))
 		hull = hull + quickt(tList, tmax,p2,img)
 		hull = hull + quickt(tList, p1, tmax,img)
 		
 
 	return hull	
 
+def start():
 
-#main for testing quickhull
-if __name__ == "__main__":	
+	val = int(t.list.curselection())
+	print(val)
+
+	
 	#Generate random points
-	points = [(random.randint(1,199), random.randint(1,199)) for k in range(10)]
+	n = 2
+	points = [(random.randint(1,199), random.randint(1,199)) for k in range(10 ** n)]
 	#sort the random points
 	insertion_sort(points)
 
@@ -229,6 +236,59 @@ if __name__ == "__main__":
 	
 	cv2.waitKey(0)				#wait forever until a key is pressed
 	cv2.destroyAllWindows()		#close window
+
+
+class gui(tk.Tk):
+	def __init__(self):
+		tk.Tk.__init__(self)
+		self.title("Convex Hull")
+		self.lable = tk.Label(self, text = "Select Data Point Shape").pack()
+		
+		choices = ['Star','Triangle','Circle','Square','Random']
+		self.list = tk.Listbox(self, height = 5)
+		for i in choices:
+			self.list.insert(0,i)
+		self.list.select_set(0) #This only sets focus on the first item.
+		self.list.pack()
+		
+		
+		self.check = tk.Checkbutton(self, text="Animate")
+		self.check.pack()
+		self.lable2 = tk.Label(self, text = "Number of points to the power of 10").pack()
+		
+		
+		vcmd = (self.register(self.validate),
+                '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')		
+		self.datap = tk.Entry(self, validate = 'key', validatecommand = vcmd)
+		self.datap.insert(0,'1')
+		self.datap.pack()
+		self.button = tk.Button(self, text="Run", command = self.go).pack()
+	
+	def validate(self, action, index, value_if_allowed, prior_value, text, validation_type, trigger_type, widget_name):
+		if text in '0123456789*-+':
+			try:
+				int(value_if_allowed)
+				return True
+			except ValueError:
+				return False
+		else:
+			return False
+			
+	def go(self):
+		selection = int(self.list.curselection()[0])
+		numpoints = int(self.datap.get())
+		anim = self.check.state()
+		print(anim)
+	
+#main for testing quickhull
+if __name__ == "__main__":
+	t = gui()
+	t.mainloop()
+	
+	
+
+	
+	
 
 
 
