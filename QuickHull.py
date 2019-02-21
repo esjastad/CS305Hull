@@ -1,7 +1,24 @@
 import cv2
 import numpy as np
 import random
+import copy
 
+def Pdraw(points, p1,p2,p3,img,c):
+	for i in points:
+		img[i[1],i[0]] = (0,255,155)
+	cv2.line(img,p1,p2,c,1)
+	for i in range (0,4):
+		img[p3[1],p3[0]] = (255,255,255)
+		cv2.imshow('test', img)		#show the window test with the image img
+		cv2.waitKey(500)				#wait for milliseconds specified
+		img[p3[1],p3[0]] = (0,0,255)
+		cv2.imshow('test', img)		#show the window test with the image img
+		cv2.waitKey(500)				#wait for milliseconds specified
+
+def Cdraw(p, img):
+	cv2.circle(img, p, 3, (255,255,255), 1)
+	cv2.imshow('test', img)		#show the window test with the image img
+	cv2.waitKey(1000)
 
 #For sorting the x values in generated points
 def insertion_sort(InputList):
@@ -22,7 +39,7 @@ def quickhull(points, p1, p2,img):
 	tmax = None #used to store farthest point for top hull
 	bList = []	#used to store bottom hull points
 	tList = []	#used to store top hull points
-
+	img2 = copy.copy(img)
 	x1, y1 = p1 #cartesian coords
 	x2, y2 = p2
 	hull = []	#hull coords
@@ -53,8 +70,11 @@ def quickhull(points, p1, p2,img):
 	#Generate bottom hull
 	if len(bList) > 1:
 		bList.remove(bmax)
-		hull = quickb(bList, p1, bmax,img)	#recursive call to bottom hull left half
-		hull = hull + quickb(bList, bmax, p2,img) #recursive call to bottom hull right half
+
+		Pdraw(bList,p1,p2,bmax,img2,(0,255,0))
+		
+		hull = quickb(bList, p1, bmax,img2)	#recursive call to bottom hull left half
+		hull = hull + quickb(bList, bmax, p2,img2) #recursive call to bottom hull right half
 	elif bmax:	#if no points list then hull is done
 		hull.append(p1)
 		hull.append(bmax)
@@ -64,8 +84,11 @@ def quickhull(points, p1, p2,img):
 	#Generate top hull 
 	if len(tList) > 1:
 		tList.remove(tmax)
-		hull = hull + quickt(tList, tmax, p2,img) 	#recursive call to top hull right half
-		hull = hull + quickt(tList, p1, tmax,img)	#recursive call to top hull left half
+		
+		Pdraw(tList,p1,p2,tmax,img2,(0,255,0))
+		
+		hull = hull + quickt(tList, tmax, p2,img2) 	#recursive call to top hull right half
+		hull = hull + quickt(tList, p1, tmax,img2)	#recursive call to top hull left half
 	elif tmax:
 		hull.append(p2)
 		hull.append(tmax)
@@ -99,12 +122,16 @@ def quickb(points,p1,p2,img):
 				print("Implement ==")
 	if len(bList) == 1:
 		bList.remove(bmax)
-		
+
 	if len(bList) == 0:
+		cv2.line(img,p1,p2,(255,0,0),1)
 		hull.append(p1)
+		Cdraw(p1,img)
 		if bmax:
 			hull.append(bmax)
+			Cdraw(bmax,img)
 	else:
+		Pdraw(bList,p1,p2,bmax,img,(255,0,0))
 		hull = hull + quickb(bList, p1,bmax,img)
 		hull = hull + quickb(bList, bmax, p2,img)
 	
@@ -140,10 +167,14 @@ def quickt(points,p1,p2,img):
 		tList.remove(tmax)
 		
 	if len(tList) == 0:
+		cv2.line(img,p1,p2,(255,0,0),1)
 		hull.append(p2)
+		Cdraw(p2,img)
 		if tmax:
 			hull.append(tmax)
+			Cdraw(tmax,img)
 	else:
+		Pdraw(tList,p1,p2,tmax,img,(255,0,0))
 		hull = hull + quickt(tList, tmax,p2,img)
 		hull = hull + quickt(tList, p1, tmax,img)
 		
@@ -158,29 +189,42 @@ if __name__ == "__main__":
 	#sort the random points
 	insertion_sort(points)
 
-
+	cv2.namedWindow('test', 0)	#make a window named test
 
 	#generate a 200 by 200 pixel image matrix with 3 values for color
 	img = np.zeros([200,200,3])
-
-
+	
+	#color points green
+	for i in points:
+		img[i[1],i[0]] = (0,255,0)
+	
+	cv2.imshow('test', img)		#show the window test with the image img
+	cv2.waitKey(1000)
+	
 	#generate quickhull feeding in sorted extremes as starting points
 	hull = quickhull(points,points[0],points[len(points)-1],img)
+	
 
-	#connect the dots with lines for the hull
-	for i in range(0,len(hull)-1):
-		cv2.line(img,hull[i],hull[i+1],(0,255,0),1)
-	cv2.line(img,hull[len(hull) -1],hull[0],(0,255,0),1)	#connect the last line
-
-	#color internal points blue
-	for i in points:
-		img[i[1],i[0]] = (255,0,0)
-
+	cv2.namedWindow('test', 0)	#make a window named test
+	
 	#color hull points red
 	for i in hull:
 		img[i[1],i[0]] = (0,0,255)
+		
+	cv2.imshow('test', img)		#show the window test with the image img
+	cv2.waitKey(500)	
+	#connect the dots with lines for the hull
+	for i in range(0,len(hull)-1):
+		cv2.line(img,hull[i],hull[i+1],(0,255,0),1)
+		cv2.imshow('test', img)		#show the window test with the image img
+		cv2.waitKey(500)
+	cv2.line(img,hull[len(hull) -1],hull[0],(0,255,0),1)	#connect the last line
 
-	cv2.namedWindow('test', 0)	#make a window named test
+
+
+	
+
+	
 	cv2.imshow('test', img)		#show the window test with the image img
 	
 	cv2.waitKey(0)				#wait forever until a key is pressed
