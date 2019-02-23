@@ -80,16 +80,14 @@ def quickhull(points, p1, p2):
 			if(d > bbest):
 				bbest = d
 				bmax = points[i]
-			elif(d == bbest):
-				print(" ")
+
 			
 		elif(round(d)<0):
 			tList.append(points[i])
 			if (d < tbest):
 				tbest = d
 				tmax = points[i]
-			elif(d == tbest):
-				print(" ")
+
 	
 	#Generate bottom hull
 	if len(bList) > 1:
@@ -138,8 +136,7 @@ def quickb(points,p1,p2):
 			if(d > bbest):
 				bbest = d
 				bmax = points[i]
-			elif(d == bbest):
-				print(" ")
+
 	if len(bList) == 1:
 		bList.remove(bmax)
 
@@ -175,8 +172,7 @@ def quickt(points,p1,p2):
 			if (d < tbest):
 				tbest = d
 				tmax = points[i]
-			elif(d == tbest):
-				print(" ")
+
 	
 	
 	if len(tList) == 1:
@@ -220,16 +216,14 @@ def aquickhull(points, p1, p2,img):
 			if(d > bbest):
 				bbest = d
 				bmax = points[i]
-			elif(d == bbest):
-				print(" ")
+
 			
 		elif(round(d)<0):
 			tList.append(points[i])
 			if (d < tbest):
 				tbest = d
 				tmax = points[i]
-			elif(d == tbest):
-				print(" ")
+
 	
 	#Generate bottom hull
 	if len(bList) > 1:
@@ -282,8 +276,7 @@ def aquickb(points,p1,p2,img):
 			if(d > bbest):
 				bbest = d
 				bmax = points[i]
-			elif(d == bbest):
-				print("  ")
+
 	if len(bList) == 1:
 		bList.remove(bmax)
 
@@ -323,9 +316,7 @@ def aquickt(points,p1,p2,img):
 			if (d < tbest):
 				tbest = d
 				tmax = points[i]
-			elif(d == tbest):
-				print("  ")
-	
+
 	
 	if len(tList) == 1:
 		tList.remove(tmax)
@@ -401,14 +392,15 @@ class gui(tk.Tk):
 		self.title("Convex Hull")	# title of gui 
 	
 		#Code for number of points input in GUI		
-		self.label = tk.Label(self, text = "Polygon with n side/points (n < 3 = random)").pack()	
+		self.label = tk.Label(self, text = "Polygon with n side/points").pack()	
 		sv2 = tk.StringVar()	#variable for text field n point polygon
 		sv2.trace("w", lambda name, index, mode, sv2=sv2: self.onselect(self))	#call onselect when field edited
 		vcmd2 = (self.register(self.validate),'%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
 		self.e = tk.Entry(self, validate = 'key', validatecommand = vcmd2, textvariable = sv2) #entry field using var and validation
 		self.e.insert(0,'3')  # set def value to 3 in entry field
 		self.e.pack()
-				
+		self.label3 = tk.Label(self, text = "n values less than 3 = random shape").pack()		
+		
 		#code for animate check button
 		self.var = tk.IntVar()
 		self.check = tk.Checkbutton(self, text="Animate", variable = self.var)
@@ -511,12 +503,12 @@ def pgon(n,num):
 
 #generate all data needed to run
 def genData(sides, num):
-	if num < 7 and sides <= 360:
+	if num < 6 and sides <= 360:
 		#Generate random points
 		data = genpo(sides,num)
 		
 		#sort the random points
-		#qsort(data[0])
+		qsort(data[0])
 		
 		#generate a 200 by 200 pixel image matrix with 3 values for color
 		img = np.zeros([200,200,3])
@@ -535,7 +527,7 @@ def genData(sides, num):
 		data = genpo(360,num)
 		
 		#sort the random points
-		#qsort(data[0])
+		qsort(data[0])
 		
 		#generate a 200 by 200 pixel image matrix with 3 values for color
 		img = np.zeros([200,200,3])
