@@ -112,7 +112,7 @@ def quickhull(points, p1, p2):
 		hull.append(tmax)
 	else:
 		hull.append(p2)
-	print(time.time() -startHull)	
+	print("Time elapsed: ",time.time() -startHull)	
 	return hull
 
 #Generate bottom convex hull for NO ANIMATION	code is nearly identical to quickhull but only generates bottom hull
@@ -337,23 +337,6 @@ def aquickt(points,p1,p2,img):
 	return hull
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def startHull(points,img,anim):
 	if points == None:
 		return
@@ -378,8 +361,6 @@ def startHull(points,img,anim):
 	else:
 		#generate quickhull feeding in sorted extremes as startHulling point
 		hull = quickhull(points,points[0],points[len(points)-1])
-	
-		
 	
 
 
