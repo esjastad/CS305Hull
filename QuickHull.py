@@ -438,7 +438,7 @@ def genInnerPoints(shaped, num):
 	min_x, min_y, max_x, max_y = poly.bounds
 
 	b = []
-	b.append([(99,99)])
+	b.append([(199,199)])
 	
 	while len(b[0]) < num:
 		rp = Point([random.uniform(min_x, max_x), random.uniform(min_y, max_y)])
@@ -451,19 +451,19 @@ def genInnerPoints(shaped, num):
 def pgon(n,num):
 	xy = []
 	if n < 3:
-		xy.append([(random.randint(0,199),random.randint(0,199)) for i in range (10**num)])
+		xy.append([(random.randint(0,399),random.randint(0,399)) for i in range (10**num)])
 	elif n == 3:
-		xy.append([(24,174),(174,174),(99,24)])
+		xy.append([(49,349),(349,349),(199,49)])
 		xy[0].extend(genInnerPoints(xy,((10 ** num) - 3))[0])
 		
 	elif n == 4:
 		angles = 360/n
 		
-		r = 75
+		r = 150
 		xy = []
-		xy.append([(int(99 + 75 * sin(math.radians(45))),int(99 + 75 * cos(math.radians(45))))])
+		xy.append([(int(199 + r * sin(math.radians(45))),int(199 + r * cos(math.radians(45))))])
 		for i in range (1,n):
-			p = (int(99 + 75 * sin(math.radians(angles *i+45))),int(99 + 75 * cos(math.radians(angles * i+45))))
+			p = (int(199 + r * sin(math.radians(angles *i+45))),int(199 + r * cos(math.radians(angles * i+45))))
 			xy[0].extend([p])
 	
 		xy[0].extend(genInnerPoints(xy,((10**num)-n))[0])
@@ -471,11 +471,11 @@ def pgon(n,num):
 	else:
 		angles = 360/n
 		
-		r = 75
+		r = 150
 		xy = []
-		xy.append([(int(99 + 75 * sin(math.radians(180))),int(99 + 75 * cos(math.radians(180))))])
+		xy.append([(int(199 + r * sin(math.radians(180))),int(199 + r * cos(math.radians(180))))])
 		for i in range (1,n):
-			p = (int(99 + 75 * sin(math.radians(angles *i+180))),int(99 + 75 * cos(math.radians(angles * i+180))))
+			p = (int(199 + r * sin(math.radians(angles *i+180))),int(199 + r * cos(math.radians(angles * i+180))))
 			xy[0].extend([p])
 		
 		xy[0].extend(genInnerPoints(xy,((10**num)-n))[0])
@@ -492,7 +492,7 @@ def genData(sides, num):
 		qsort(data[0])
 		
 		#generate a 200 by 200 pixel image matrix with 3 values for color
-		img = np.zeros([200,200,3])
+		img = np.zeros([400,400,3])
 
 		data.append(img)
 	
@@ -504,14 +504,15 @@ def genData(sides, num):
 		img = cv2.resize(img, (400,400))
 		cv2.namedWindow('test', 0)	#make a window named test
 		cv2.imshow('test', img)		#show the window test with the image img
-	elif n < 6 and sides > 360:
+	
+	elif num < 6 and sides > 360:
 		data = genpo(360,num)
 		
 		#sort the random points
 		qsort(data[0])
 		
 		#generate a 200 by 200 pixel image matrix with 3 values for color
-		img = np.zeros([200,200,3])
+		img = np.zeros([400,400,3])
 
 		data.append(img)
 	
