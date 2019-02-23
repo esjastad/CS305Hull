@@ -6,7 +6,9 @@ import time
 import tkinter as tk
 import math 
 from math import pi, cos, sin
+from shapely.geometry import Polygon, Point
 
+#animation flashing point
 def Pdraw(points, p1,p2,p3,img,c):
 	for i in points:
 		img[i[1],i[0]] = (0,255,155)
@@ -19,11 +21,14 @@ def Pdraw(points, p1,p2,p3,img,c):
 		cv2.imshow('test', img)		#show the window test with the image img
 		cv2.waitKey(500)				#wait for milliseconds specified
 
+#draw circle around selected point
 def Cdraw(p, img):
 	cv2.circle(img, p, 3, (255,255,255), 1)
 	cv2.imshow('test', img)		#show the window test with the image img
 	cv2.waitKey(1000)
 
+	
+#quicksort
 def partition(array, begin, end):
     pivot = begin
     for i in range (begin+1, end+1):
@@ -47,15 +52,6 @@ def qsort(InputList):
 	end = len(InputList)-1
 	InputList = quicksort(InputList,0,end)
 	
-	
-
-
-
-
-
-
-
-
 
 #Generate Top and Bottom hull startHull for NO ANIMATION
 def quickhull(points, p1, p2):
@@ -77,6 +73,7 @@ def quickhull(points, p1, p2):
 	
 		x3,y3 = points[i]
 		
+		#distance from line generate by x1y1 and 2y2
 		d = x1*y2+x3*y1+x2*y3-x3*y2-x2*y1-x1*y3
 		if(round(d) > 0):
 			bList.append(points[i])
@@ -84,7 +81,7 @@ def quickhull(points, p1, p2):
 				bbest = d
 				bmax = points[i]
 			elif(d == bbest):
-				print("Implement ==")
+				print(" ")
 			
 		elif(round(d)<0):
 			tList.append(points[i])
@@ -92,7 +89,7 @@ def quickhull(points, p1, p2):
 				tbest = d
 				tmax = points[i]
 			elif(d == tbest):
-				print("Implement ==")
+				print(" ")
 	
 	#Generate bottom hull
 	if len(bList) > 1:
@@ -142,7 +139,7 @@ def quickb(points,p1,p2):
 				bbest = d
 				bmax = points[i]
 			elif(d == bbest):
-				print("Implement ==")
+				print(" ")
 	if len(bList) == 1:
 		bList.remove(bmax)
 
@@ -179,7 +176,7 @@ def quickt(points,p1,p2):
 				tbest = d
 				tmax = points[i]
 			elif(d == tbest):
-				print("Implement ==")
+				print(" ")
 	
 	
 	if len(tList) == 1:
@@ -224,7 +221,7 @@ def aquickhull(points, p1, p2,img):
 				bbest = d
 				bmax = points[i]
 			elif(d == bbest):
-				print("Implement ==")
+				print(" ")
 			
 		elif(round(d)<0):
 			tList.append(points[i])
@@ -232,7 +229,7 @@ def aquickhull(points, p1, p2,img):
 				tbest = d
 				tmax = points[i]
 			elif(d == tbest):
-				print("Implement ==")
+				print(" ")
 	
 	#Generate bottom hull
 	if len(bList) > 1:
@@ -286,7 +283,7 @@ def aquickb(points,p1,p2,img):
 				bbest = d
 				bmax = points[i]
 			elif(d == bbest):
-				print("Implement ==")
+				print("  ")
 	if len(bList) == 1:
 		bList.remove(bmax)
 
@@ -327,7 +324,7 @@ def aquickt(points,p1,p2,img):
 				tbest = d
 				tmax = points[i]
 			elif(d == tbest):
-				print("Implement ==")
+				print("  ")
 	
 	
 	if len(tList) == 1:
@@ -399,22 +396,19 @@ class gui(tk.Tk):
 	points = None
 	img = None
 	def __init__(self):
-		
-		
+			
 		tk.Tk.__init__(self)
-		self.title("Convex Hull")
-		
-		#code for shape choices in GUI
-		self.lable = tk.Label(self, text = "Select Data Point Shape").pack()
-		
-		choices = ['Star','Triangle','Circle','Square','Random']
-		self.list = tk.Listbox(self, height = 5)
-		for i in choices:
-			self.list.insert(0,i)
-		self.list.select_set(0) #This only sets focus on the first item.
-		self.list.bind('<<ListboxSelect>>', self.onselect)
-		self.list.pack()
-		
+		self.title("Convex Hull")	# title of gui 
+	
+		#Code for number of points input in GUI		
+		self.label = tk.Label(self, text = "Polygon with n side/points").pack()	
+		sv2 = tk.StringVar()	#variable for text field n point polygon
+		sv2.trace("w", lambda name, index, mode, sv2=sv2: self.onselect(self))	#call onselect when field edited
+		vcmd2 = (self.register(self.validate),'%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+		self.e = tk.Entry(self, validate = 'key', validatecommand = vcmd2, textvariable = sv2) #entry field using var and validation
+		self.e.insert(0,'3')  # set def value to 3 in entry field
+		self.e.pack()
+				
 		#code for animate check button
 		self.var = tk.IntVar()
 		self.check = tk.Checkbutton(self, text="Animate", variable = self.var)
@@ -440,9 +434,9 @@ class gui(tk.Tk):
 		else:
 			return False
 			
-	def go(self):
+	def go(self):	#when run it pressed check that settings were valid and run
 		try:
-			selection = int(self.list.curselection()[0])
+			sides = int(self.e.get())
 			anim = self.var.get()
 			numpoints = int(self.datap.get())
 			startHull(self.points,self.img,anim)
@@ -450,60 +444,93 @@ class gui(tk.Tk):
 		except:
 			print("Check for Valid Selections!")
 				
-	def onselect(self,t):
-		selection = int(self.list.curselection()[0])
-		numpoints = int(self.datap.get())
-		self.points, self.img = genpoints(selection,numpoints)
+	def onselect(self,t):	#when data is changed in entry fields generate the respective data
 		try:
-			selection = int(self.list.curselection()[0])
+			sides = int(self.e.get())
 			numpoints = int(self.datap.get())
-			self.points, self.img = genpoints(selection,numpoints)
+			self.points, self.img = genData(sides,numpoints)
 		except:
 			return
-		
-def genpo(type,num):
-	xy = []
-	#could implement switch/enum
-	if type == 0:	#if random
-		xy.append([(random.randint(1,199), random.randint(1,199)) for k in range(10 ** num)])
-	elif type == 1: #square
-		xy.append([(25,25),(25,174),(174,25),(174,174)])	#gen square points
-		b = []
-		b.append([(random.randint(25,174), random.randint(25,174)) for k in range((10 ** num)-4)]) #gen inner points
-		xy[0].extend(b[0])
 
-	elif type == 2: #circle
-		n = int(10**num *.2)
-		if n < 6:
-			n = 6
-		r = 75
-		xy.append([(int(cos(2*pi/n*x)*r)+99,int(sin(2*pi/n*x)*r)+99) for x in range(n)])	# gen perim
+#wrapper to generate points			
+def genpo(sides,num):
+	xy = []			
+	xy = pgon(sides,(num))
+	return xy
 
-		for i in range ((10**num)- n):	#gen inner circl points
-			r = 75 * math.sqrt(random.random())
-			a = 2 * pi * random.random()
-			xy[0].extend([((int(r * cos(2* pi * a) ) + 99), int (r * sin(2* pi * a) + 99))])
+#generate points inside the polygon
+def genInnerPoints(shaped, num):
+	
+	poly = Polygon(shaped[0])
+	min_x, min_y, max_x, max_y = poly.bounds
 
-
-	elif type == 3: #triangle
-		xy.append([(24,174),(174,174),(99,24)])
-		for i in range ((10**num)- 3):	#gen inner circl points
-			r1 = random.uniform(0,0.8628)
-			x = 24 + xy[0][1][0] * r1
-			r2 = random.uniform(abs(((x - 24)/75) - 1),1)
-			y = 24 + 150 * r2
-
-			xy[0].extend([(int(x),int(y))])
+	b = []
+	b.append([(99,99)])
+	
+	while len(b[0]) < num:
+		rp = Point([random.uniform(min_x, max_x), random.uniform(min_y, max_y)])
+		if (rp.within(poly)):
+			b[0].extend([(int(rp.x),int(rp.y))])
 			
-	elif type == 4: #star
-		xy.append([(random.randint(1,199), random.randint(1,199)) for k in range(10 ** num)])
+	return b
+		
+#generate a polygon
+def pgon(n,num):
+	xy = []
+	if n == 3:
+		xy.append([(24,174),(174,174),(99,24)])
+		xy[0].extend(genInnerPoints(xy,((10 ** num) - 3))[0])
+		
+	elif n == 4:
+		angles = 360/n
+		
+		r = 75
+		xy = []
+		xy.append([(int(99 + 75 * sin(math.radians(45))),int(99 + 75 * cos(math.radians(45))))])
+		for i in range (1,n):
+			p = (int(99 + 75 * sin(math.radians(angles *i+45))),int(99 + 75 * cos(math.radians(angles * i+45))))
+			xy[0].extend([p])
+	
+		xy[0].extend(genInnerPoints(xy,((10**num)-n))[0])
+			
+	else:
+		angles = 360/n
+		
+		r = 75
+		xy = []
+		xy.append([(int(99 + 75 * sin(math.radians(180))),int(99 + 75 * cos(math.radians(180))))])
+		for i in range (1,n):
+			p = (int(99 + 75 * sin(math.radians(angles *i+180))),int(99 + 75 * cos(math.radians(angles * i+180))))
+			xy[0].extend([p])
+		
+		xy[0].extend(genInnerPoints(xy,((10**num)-n))[0])
 	
 	return xy
-		
-def genpoints(type, num):
-	if num < 7:
+
+#generate all data needed to run
+def genData(sides, num):
+	if num < 6 and sides <= 360:
 		#Generate random points
-		data = genpo(type,num)
+		data = genpo(sides,num)
+		
+		#sort the random points
+		qsort(data[0])
+		
+		#generate a 200 by 200 pixel image matrix with 3 values for color
+		img = np.zeros([200,200,3])
+
+		data.append(img)
+	
+	
+		#color points green
+		for i in data[0]:
+			img[i[1],i[0]] = (0,255,0)
+		
+		img = cv2.resize(img, (400,400))
+		cv2.namedWindow('test', 0)	#make a window named test
+		cv2.imshow('test', img)		#show the window test with the image img
+	elif n < 6 and sides > 360:
+		data = genpo(360,num)
 		
 		#sort the random points
 		qsort(data[0])
