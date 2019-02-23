@@ -444,7 +444,8 @@ def genInnerPoints(shaped, num):
 		rp = Point([random.uniform(min_x, max_x), random.uniform(min_y, max_y)])
 		if (rp.within(poly)):
 			b[0].extend([(int(rp.x),int(rp.y))])
-			
+
+		
 	return b
 		
 #generate a polygon
@@ -465,8 +466,10 @@ def pgon(n,num):
 		for i in range (1,n):
 			p = (int(199 + r * sin(math.radians(angles *i+45))),int(199 + r * cos(math.radians(angles * i+45))))
 			xy[0].extend([p])
-	
-		xy[0].extend(genInnerPoints(xy,((10**num)-n))[0])
+		
+		b = genInnerPoints(xy,((10**num)-n))
+		if len(b[0]) > 1:
+			xy[0].extend(b[0])
 			
 	else:
 		angles = 360/n
@@ -478,7 +481,9 @@ def pgon(n,num):
 			p = (int(199 + r * sin(math.radians(angles *i+180))),int(199 + r * cos(math.radians(angles * i+180))))
 			xy[0].extend([p])
 		
-		xy[0].extend(genInnerPoints(xy,((10**num)-n))[0])
+		b = genInnerPoints(xy,((10**num)-n))
+		if len(b[0]) > 1:
+			xy[0].extend(b[0])
 	
 	return xy
 
