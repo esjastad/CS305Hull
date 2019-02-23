@@ -401,7 +401,7 @@ class gui(tk.Tk):
 		self.title("Convex Hull")	# title of gui 
 	
 		#Code for number of points input in GUI		
-		self.label = tk.Label(self, text = "Polygon with n side/points").pack()	
+		self.label = tk.Label(self, text = "Polygon with n side/points (n < 3 = random)").pack()	
 		sv2 = tk.StringVar()	#variable for text field n point polygon
 		sv2.trace("w", lambda name, index, mode, sv2=sv2: self.onselect(self))	#call onselect when field edited
 		vcmd2 = (self.register(self.validate),'%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
@@ -477,7 +477,9 @@ def genInnerPoints(shaped, num):
 #generate a polygon
 def pgon(n,num):
 	xy = []
-	if n == 3:
+	if n < 3:
+		xy.append([(random.randint(0,199),random.randint(0,199)) for i in range (10**num)])
+	elif n == 3:
 		xy.append([(24,174),(174,174),(99,24)])
 		xy[0].extend(genInnerPoints(xy,((10 ** num) - 3))[0])
 		
@@ -509,12 +511,12 @@ def pgon(n,num):
 
 #generate all data needed to run
 def genData(sides, num):
-	if num < 6 and sides <= 360:
+	if num < 7 and sides <= 360:
 		#Generate random points
 		data = genpo(sides,num)
 		
 		#sort the random points
-		qsort(data[0])
+		#qsort(data[0])
 		
 		#generate a 200 by 200 pixel image matrix with 3 values for color
 		img = np.zeros([200,200,3])
@@ -533,7 +535,7 @@ def genData(sides, num):
 		data = genpo(360,num)
 		
 		#sort the random points
-		qsort(data[0])
+		#qsort(data[0])
 		
 		#generate a 200 by 200 pixel image matrix with 3 values for color
 		img = np.zeros([200,200,3])
