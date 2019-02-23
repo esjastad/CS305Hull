@@ -7,6 +7,7 @@ import tkinter as tk
 import math 
 from math import pi, cos, sin
 from shapely.geometry import Polygon, Point
+from enum import Enum
 
 #animation flashing point
 def Pdraw(points, p1,p2,p3,img,c):
@@ -54,9 +55,18 @@ def qsort(InputList):
 	
 
 #Generate Top and Bottom hull startHull for NO ANIMATION
-def quickhull(points, p1, p2):
-
-	startHull = time.time()
+def quickhull(points, p1, p2,loop):
+	if p1 == 0:
+		startHull = time.time()
+		p1 = points[0]
+		p2 = points[0]
+		for i in points:
+			if i[0] > p2[0]:
+				p2 = i
+			elif i[0] < p1[0]:
+				p1 = i
+	else:
+		startHull = time.time()
 	bbest = 0	#used to check if farthest point distance for comparison to bottom hull
 	tbest = 0	#used to check if farthest point distance for comparison to top hull
 	bmax = None #used to store farthest point for bottom hull
@@ -67,53 +77,105 @@ def quickhull(points, p1, p2):
 	x2, y2 = p2
 	hull = []	#hull coords
 	
-	#check each points distance from the "line" between x min and x max
-	#build top and bottom hull list as well as the max point for top and bottom
-	for i in range (1,len(points)-1):
-	
-		x3,y3 = points[i]
-		
-		#distance from line generate by x1y1 and 2y2
-		d = x1*y2+x3*y1+x2*y3-x3*y2-x2*y1-x1*y3
-		if(round(d) > 0):
-			bList.append(points[i])
-			if(d > bbest):
-				bbest = d
-				bmax = points[i]
+	if loop == 1:
+		for j in range (100):
+			#check each points distance from the "line" between x min and x max
+			#build top and bottom hull list as well as the max point for top and bottom
+			for i in range (1,len(points)-1):
+			
+				x3,y3 = points[i]
+				
+				#distance from line generate by x1y1 and 2y2
+				d = x1*y2+x3*y1+x2*y3-x3*y2-x2*y1-x1*y3
+				if(round(d) > 0):
+					bList.append(points[i])
+					if(d > bbest):
+						bbest = d
+						bmax = points[i]
+
+					
+				elif(round(d)<0):
+					tList.append(points[i])
+					if (d < tbest):
+						tbest = d
+						tmax = points[i]
 
 			
-		elif(round(d)<0):
-			tList.append(points[i])
-			if (d < tbest):
-				tbest = d
-				tmax = points[i]
+			#Generate bottom hull
+			if len(bList) > 1:
+				bList.remove(bmax)
 
-	
-	#Generate bottom hull
-	if len(bList) > 1:
-		bList.remove(bmax)
-
-		hull = quickb(bList, p1, bmax)	#recursive call to bottom hull left half
-		hull = hull + quickb(bList, bmax, p2) #recursive call to bottom hull right half
-	elif bmax:	#if no points list then hull is done
-		hull.append(p1)
-		hull.append(bmax)
-	else:	#if no max then hull is done
-		hull.append(p1)
-	
-	#Generate top hull 
-	if len(tList) > 1:
-		tList.remove(tmax)
-		
-		hull = hull + quickt(tList, tmax, p2) 	#recursive call to top hull right half
-		hull = hull + quickt(tList, p1, tmax)	#recursive call to top hull left half
-	elif tmax:
-		hull.append(p2)
-		hull.append(tmax)
+				hull = quickb(bList, p1, bmax)	#recursive call to bottom hull left half
+				hull = hull + quickb(bList, bmax, p2) #recursive call to bottom hull right half
+			elif bmax:	#if no points list then hull is done
+				hull.append(p1)
+				hull.append(bmax)
+			else:	#if no max then hull is done
+				hull.append(p1)
+			
+			#Generate top hull 
+			if len(tList) > 1:
+				tList.remove(tmax)
+				
+				hull = hull + quickt(tList, tmax, p2) 	#recursive call to top hull right half
+				hull = hull + quickt(tList, p1, tmax)	#recursive call to top hull left half
+			elif tmax:
+				hull.append(p2)
+				hull.append(tmax)
+			else:
+				hull.append(p2)
+		b = ((time.time() - startHull)/1000)
 	else:
-		hull.append(p2)
-	print("Time elapsed: ",time.time() -startHull)	
-	return hull
+		#check each points distance from the "line" between x min and x max
+		#build top and bottom hull list as well as the max point for top and bottom
+		for i in range (1,len(points)-1):
+		
+			x3,y3 = points[i]
+			
+			#distance from line generate by x1y1 and 2y2
+			d = x1*y2+x3*y1+x2*y3-x3*y2-x2*y1-x1*y3
+			if(round(d) > 0):
+				bList.append(points[i])
+				if(d > bbest):
+					bbest = d
+					bmax = points[i]
+
+				
+			elif(round(d)<0):
+				tList.append(points[i])
+				if (d < tbest):
+					tbest = d
+					tmax = points[i]
+
+		
+		#Generate bottom hull
+		if len(bList) > 1:
+			bList.remove(bmax)
+
+			hull = quickb(bList, p1, bmax)	#recursive call to bottom hull left half
+			hull = hull + quickb(bList, bmax, p2) #recursive call to bottom hull right half
+		elif bmax:	#if no points list then hull is done
+			hull.append(p1)
+			hull.append(bmax)
+		else:	#if no max then hull is done
+			hull.append(p1)
+		
+		#Generate top hull 
+		if len(tList) > 1:
+			tList.remove(tmax)
+			
+			hull = hull + quickt(tList, tmax, p2) 	#recursive call to top hull right half
+			hull = hull + quickt(tList, p1, tmax)	#recursive call to top hull left half
+		elif tmax:
+			hull.append(p2)
+			hull.append(tmax)
+		else:
+			hull.append(p2)
+	
+		b = time.time() - startHull
+
+	
+	return b
 
 #Generate bottom convex hull for NO ANIMATION	code is nearly identical to quickhull but only generates bottom hull
 def quickb(points,p1,p2):
@@ -337,7 +399,7 @@ def aquickt(points,p1,p2,img):
 	return hull
 
 
-def startHull(points,img,anim):
+def startHull(points,img,anim,sorted):
 	if points == None:
 		return
 		
@@ -360,13 +422,25 @@ def startHull(points,img,anim):
 		cv2.imshow('test', img)		#show the window test with the image img
 	else:
 		#generate quickhull feeding in sorted extremes as startHulling point
-		hull = quickhull(points,points[0],points[len(points)-1])
+		if len(points) < 999:
+			if sorted == 1:
+				hull = quickhull(points,points[0],points[len(points)-1],1)
+			else:
+				hull = quickhull(points,0,0,1)
+		else:
+			if sorted == 1:
+				hull = quickhull(points,points[0],points[len(points)-1],0)
+			else:
+				hull = quickhull(points,0,0,0)
+	return hull
 	
 
 
 class gui(tk.Tk):
 	points = None
 	img = None
+	shapes = ('Random','Triangle','Square','Pentagon','Circle')
+	
 	def __init__(self):
 			
 		tk.Tk.__init__(self)
@@ -399,6 +473,8 @@ class gui(tk.Tk):
 		
 		#Run button
 		self.button = tk.Button(self, text="Run", command = self.go).pack()
+		self.label4 = tk.Label(self, text = "Generate Project Data !May Take A While").pack()
+		self.button2 = tk.Button(self, text="Gather Data", command = self.collect).pack()
 
 	#Check if text entered is the values below, if so return true and print character in field
 	def validate(self, action, index, value_if_allowed, prior_value, text, validation_type, trigger_type, widget_name):
@@ -412,7 +488,7 @@ class gui(tk.Tk):
 			sides = int(self.e.get())
 			anim = self.var.get()
 			numpoints = int(self.datap.get())
-			startHull(self.points,self.img,anim)
+			startHull(self.points,self.img,anim,1)
 
 		except:
 			print("Check for Valid Selections!")
@@ -421,9 +497,102 @@ class gui(tk.Tk):
 		try:
 			sides = int(self.e.get())
 			numpoints = int(self.datap.get())
-			self.points, self.img = genData(sides,numpoints)
+			self.points, self.img = genData(sides,numpoints,1,1)
 		except:
 			return
+	def collect(self):
+		file = open("ConvexHullData.txt","w")
+		b = 99.99
+		for i in range (2,6):
+			file.write(self.shapes[i-2])
+			file.write("\nPoints\tQuick Unsorted Time\tQuick Sorted Time\tBrute Unsorted Time\tBrute Sorted Time\n")
+			for j in range(1,6):
+				p,img = genData(i,j,0,0)
+				for t in range(10):
+					r = startHull(p,img,0,0)
+					if r < b:
+						b = r
+				file.write("10^")
+				file.write(str(j))
+				file.write("\t")
+				file.write(str(b))
+
+				b = 99.99
+				qsort(p)
+				for t in range(10):
+					r = startHull(p,img,0,1)
+					if r < b:
+						b = r
+				file.write("\t")
+				file.write(str(b))
+				file.write("\n")
+				b = 99.99
+			file.write('\n')
+			
+		file.write("Circle\nPoints\tQuick Unsorted Time\tQuick Sorted Time\tBrute Unsorted Time\tBrute Sorted Time\n")
+		p,img = genData(10,1,0,0)
+		b = 99.99
+		for t in range(10):
+			r = startHull(p,img,0,0)
+			if r < b:
+				b = r
+		file.write("10^1\t")
+		file.write(str(b))
+	
+		qsort(p)
+		b = 99.99
+		for t in range(10):
+			r = startHull(p,img,0,1)
+			if r < b:
+				b = r
+		file.write("\t")
+		file.write(str(b))
+		file.write("\n")
+		
+		p,img = genData(100,2,0,0)
+		b = 99.99
+		for t in range(10):
+			r = startHull(p,img,0,0)
+			if r < b:
+				b = r
+
+		file.write("10^2\t")
+		file.write(str(b))
+		qsort(p)
+		b = 99.99
+		for t in range(10):
+			r = startHull(p,img,0,1)
+			if r < b:
+				b = r
+
+		file.write("\t")
+		file.write(str(b))
+		file.write("\n")
+		
+		for k in range(3,6):
+			b = 99.99
+			p,img = genData(360,k,0,0)
+			for t in range(10):
+				r = startHull(p,img,0,0)
+				if r < b:
+					b = r
+			file.write("10^")
+			file.write(str(k))
+			file.write("\t")
+			file.write(str(b))
+			
+			b = 99.99
+			qsort(p)
+			for t in range(10):
+				r = startHull(p,img,0,1)
+				if r < b:
+					b = r
+			file.write("\t")
+			file.write(str(b))
+			file.write("\n")	
+			
+
+		#for i in range 4:
 
 #wrapper to generate points			
 def genpo(sides,num):
@@ -488,25 +657,28 @@ def pgon(n,num):
 	return xy
 
 #generate all data needed to run
-def genData(sides, num):
+def genData(sides, num, flag,sorted):
 	if num < 6 and sides <= 360:
 		#Generate random points
 		data = genpo(sides,num)
 		
-		#sort the random points
-		qsort(data[0])
+		if sorted == 1:
+			#sort the random points
+			qsort(data[0])
+		
 		
 		#generate a 200 by 200 pixel image matrix with 3 values for color
 		img = np.zeros([400,400,3])
 
 		data.append(img)
 	
-	
-		#color points green
-		for i in data[0]:
-			img[i[1],i[0]] = (0,255,0)
+		if flag > 0:
+			#color points green
+			for i in data[0]:
+				img[i[1],i[0]] = (0,255,0)
 		
-		img = cv2.resize(img, (400,400))
+			img = cv2.resize(img, (400,400))
+			
 		cv2.namedWindow('test', 0)	#make a window named test
 		cv2.imshow('test', img)		#show the window test with the image img
 	
@@ -522,11 +694,13 @@ def genData(sides, num):
 		data.append(img)
 	
 	
-		#color points green
-		for i in data[0]:
-			img[i[1],i[0]] = (0,255,0)
+		if flag > 0:
+			#color points green
+			for i in data[0]:
+				img[i[1],i[0]] = (0,255,0)
 		
-		img = cv2.resize(img, (400,400))
+			img = cv2.resize(img, (400,400))
+			
 		cv2.namedWindow('test', 0)	#make a window named test
 		cv2.imshow('test', img)		#show the window test with the image img
 	else:
@@ -537,6 +711,7 @@ def genData(sides, num):
 	return data
 	
 
+		
 
 #main for testing quickhull
 if __name__ == "__main__":
