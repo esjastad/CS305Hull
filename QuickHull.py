@@ -473,7 +473,7 @@ class gui(tk.Tk):
 		
 		#Run button
 		self.button = tk.Button(self, text="Run", command = self.go).pack()
-		self.label4 = tk.Label(self, text = "Generate Project Data !May Take A While").pack()
+		self.label4 = tk.Label(self, text = "\n\nGenerate Project Data\nThis will take about 3 minutes currently").pack()
 		self.button2 = tk.Button(self, text="Gather Data", command = self.collect).pack()
 
 	#Check if text entered is the values below, if so return true and print character in field
