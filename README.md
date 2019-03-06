@@ -26,7 +26,7 @@ The final returned hull points list contains the points IN ORDER to draw lines f
 The iterations give a performance of O(n) and the recursive call is O(log n)  yielding a performance of O(n log n)
 
 
-#data collection
+# data collection
 
 The data is collected by generating random points, triangle, square, Decagon, 180 sided, and circle 360 sided polygon
 For each shape type we generate unsorted data with a total number of points 10^1 to 10^5.
@@ -38,7 +38,7 @@ If the number of points is too small, 10^1 and 10^2 the quickhull algorithm is l
 
 The data file created is a .txt file where each data field is seperated by a tab, This is great because you can go into excel or google spreadsheets and import the .txt and each block will be populated accordingly for easy graphing or data analysis.
 
-#Interesting things
+# Interesting things
 Quickhull timing seems to be influenced by the number of points to iterate across as well as the shape.  So a square is faster than a circle for quickhull because for a square only finds 2 other distant points and so only runs recursively 2x but a cricle with 360 points will typically have to recur 60x or more (its not 360 because some of those points lie on the line and have a distance of 0)
 
 Another interesting issue I have found in the data is that the sorted data seems to take longer than unsorted for quickhull.  I can not think of a reason why this is happening, but I feel like we need to discover why.   This makes no sense to me because the unsorted algorithm has the additional time overhead of iterating across the points first to find the min and max, while the sorted call does not do this!  THE ALGORITHMS ARE THE SAME!!! it was a simple copy paste and the only difference is adding the loop to find the min max, you can see this code in qhull.py    
