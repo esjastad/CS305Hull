@@ -1,7 +1,7 @@
 import pgon
 
 
-data = pgon.gen(3,1)  #generate the data to find a convex hull for
+data = pgon.gen(4,1)  #generate the data to find a convex hull for
 data = data[0]
 edge = []
 size = len(data)

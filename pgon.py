@@ -8,10 +8,7 @@ def genInnerPoints(shaped, num):
 	
 	poly = Polygon(shaped[0])	#create a polygon using shapely, polygon based on initial shaped data
 	min_x, min_y, max_x, max_y = poly.bounds	#get min max of x,y coords
-	min_x = min_x + (max_x - min_x)/4
-	min_y = min_y + (max_y - min_y)/4
-	max_x = max_x - (max_x - min_x)/4
-	max_y = max_y - (max_y - min_y)/4
+
 	b = []
 	b.append([(199,199)])	#append list with center point, just to get index 0 going
 	
@@ -26,7 +23,6 @@ def genInnerPoints(shaped, num):
 #generate a polygon
 def gen(n,num):
 	xy = []
-	
 	if n < 3:	#generate random
 		xy.append([(random.randint(0,399),random.randint(0,399)) for i in range (10**num)])
 	elif n == 3:	#generate triangle
@@ -62,8 +58,6 @@ def gen(n,num):
 		b = genInnerPoints(xy,((10**num)-n))
 		if len(b[0]) > 1:
 			xy[0].extend(b[0])
-	
-
 	
 	return xy
 
