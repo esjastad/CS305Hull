@@ -46,4 +46,4 @@ Another interesting issue I have found in the data is that the sorted data seems
 
 It currently takes around 30-45 minutes to generate the data just for quickhull.  If we added the 10^6 data collection the process would probably take 2+ hours just for quickhull, this is because it is already doing 6 shapes and 5 powers of data points.  so 30 different runs that happen 20x each making it a total of 600 runs, but this is just for sorted data, then unsorted does another 600 making 1,200 runs total.  Each higher power for 10^n takes longer as well since the algorithm is n logn.
 
-If we would like to use more than 10^5 data points, change line 40 in data.py.  Change the 6 in the for loop to 7 to include 10^6, to 8 to include 10^7 and so on.
+If we would like to use more than 10^5 data points, change line 62 in data.py.  Change the 6 in the for loop to 7 to include 10^6, to 8 to include 10^7 and so on.
