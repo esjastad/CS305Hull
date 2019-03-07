@@ -1,8 +1,7 @@
 import pgon
-import cv2
-import numpy as np
 
-data = pgon.gen(6,1)  #generate the data to find a convex hull for
+
+data = pgon.gen(4,1)  #generate the data to find a convex hull for
 data = data[0]
 edge = []
 size = len(data)
@@ -37,21 +36,17 @@ for i in range (size):
 					flag = 1	# set this flag to break out of the j loop
 					break
 		if flag != 1:	# if not part of convex hull break out to iterate i						
-			edge.append([data[i],data[j]])
-			
-			#The code below would coudl replace the edge.append above to generate the specific points that would match quickhull, 
-			#but they would be out of order for drawing the lines, so instead i just appended the hull points as above for easy line drawing in the loop below
-			#if data[i] not in edge:
-			#	edge.append(data[i])
-			#if data[j] not in edge:
-			#	edge.append(data[j])
+			if data[i] not in edge:
+				edge.append(data[i])
+			if data[j] not in edge:
+				edge.append(data[j])
 				
-img = np.zeros([400,400,3])	#make a black image
-for i in range(1,len(edge)):	#for each line data draw a line
-	 cv2.line(img,edge[i][0],edge[i][1],(255,0,0),1)
+
+#the data for the convex hull points isnt in a perfect order but they are all there
+#I have also tried manually setting the data to make sure it still captures all the points 
+#even if it is scrambled instead of being at the front of the list
+print(data)
+print(edge)
 	
-cv2.imshow('image',img)	#show the image
+	
 
-
-
-cv2.waitKey(2000)
