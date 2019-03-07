@@ -8,12 +8,15 @@ def genInnerPoints(shaped, num):
 	
 	poly = Polygon(shaped[0])	#create a polygon using shapely, polygon based on initial shaped data
 	min_x, min_y, max_x, max_y = poly.bounds	#get min max of x,y coords
-
+	min_x = min_x + (max_x - min_x)/4
+	min_y = min_y + (max_y - min_y)/4
+	max_x = max_x - (max_x - min_x)/4
+	max_y = max_y - (max_y - min_y)/4
 	b = []
 	b.append([(199,199)])	#append list with center point, just to get index 0 going
 	
 	while len(b[0]) < (num-1):	#while we dont have enough points generated
-		rp = Point([random.uniform(int((min_x/4)+min_x), int(max_x - (max_x/4))), random.uniform(int((min_y/4) + min_y), int(max_y- (max_y/4)))])  #attempt gen point in range
+		rp = Point([random.uniform(int(min_x), int(max_x)), random.uniform(int(min_y), int(max_y))])  #attempt gen point in range
 		if (rp.within(poly)):	#if generated point is within the polygon add it to the list
 			b[0].extend([(int(rp.x),int(rp.y))])
 
@@ -59,6 +62,8 @@ def gen(n,num):
 		b = genInnerPoints(xy,((10**num)-n))
 		if len(b[0]) > 1:
 			xy[0].extend(b[0])
+	
+
 	
 	return xy
 

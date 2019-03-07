@@ -1,7 +1,7 @@
 import pgon
 
 
-data = pgon.gen(4,1)  #generate the data to find a convex hull for
+data = pgon.gen(3,1)  #generate the data to find a convex hull for
 data = data[0]
 edge = []
 size = len(data)
@@ -27,7 +27,7 @@ for i in range (size):
 				if direction == 0:  #if direction is not set yet then set it
 					direction = -1
 				elif direction > 0:  #if direction is a mismatch then break out of loop because i,j can not be convex hull
-					flag =1		# set this flag to break out of j loop
+					flag = 1		# set this flag to break out of j loop
 					break
 			elif side > 0:
 				if direction == 0:	#if direction is not set yet then set it
@@ -35,7 +35,7 @@ for i in range (size):
 				elif direction < 0:	#if direction is a mismatch then break out of loop because i,j can not be convex hull  
 					flag = 1	# set this flag to break out of the j loop
 					break
-		if flag != 1:	# if not part of convex hull break out to iterate i						
+		if flag == 0 and direction != 0:	# if not flagged and a distance was at least not 0 once						
 			if data[i] not in edge:
 				edge.append(data[i])
 			if data[j] not in edge:
@@ -46,6 +46,8 @@ for i in range (size):
 #I have also tried manually setting the data to make sure it still captures all the points 
 #even if it is scrambled instead of being at the front of the list
 print(data)
+print("\n")
+print(len(edge))
 print(edge)
 	
 	
