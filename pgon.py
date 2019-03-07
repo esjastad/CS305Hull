@@ -8,7 +8,10 @@ def genInnerPoints(shaped, num):
 	
 	poly = Polygon(shaped[0])	#create a polygon using shapely, polygon based on initial shaped data
 	min_x, min_y, max_x, max_y = poly.bounds	#get min max of x,y coords
-
+	min_x += 1
+	min_y += 1
+	max_x -= 1
+	max_y -= 1
 	b = []
 	b.append([(199,199)])	#append list with center point, just to get index 0 going
 	
